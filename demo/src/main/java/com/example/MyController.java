@@ -23,7 +23,7 @@ import javafx.util.Duration;
 import javafx.util.converter.DefaultStringConverter;
 import jssc.SerialPortList;
 
-public class MyController implements Ports.DataListener, Ports.ErrorListener, Ports.CountSendedBytes  {
+public class MyController implements Ports.DataListener, Ports.ErrorListener, Ports.CountSendedBytes, Ports.SendBit  {
 
     private Ports port;
 
@@ -83,7 +83,7 @@ public class MyController implements Ports.DataListener, Ports.ErrorListener, Po
 
     @FXML
     public void initialize() {
-        port = new Ports(this, this, this);
+        port = new Ports(this, this, this, this);
 
         inputArea.setDisable(true);
         Text config = new Text("BAUDRATE_9600\nDATABITS_8\nSTOPBITS_1\nPARITY_NONE\n");
@@ -126,7 +126,7 @@ public class MyController implements Ports.DataListener, Ports.ErrorListener, Po
 
     public void displayPacketWithColors(String packet) {
         packetDisplay.getChildren().clear();
-
+        int count = 0;
         String newpacket = packet.replace("\n", "\\n");
         
         Text config = new Text("BAUDRATE_9600\nDATABITS_8\nSTOPBITS_1\nPARITY_NONE\n");
@@ -149,6 +149,7 @@ public class MyController implements Ports.DataListener, Ports.ErrorListener, Po
             
             if (currentBits.toString().equals(flagStart) && currentBit == inverseBit) {
                 bitText.setFill(Color.RED);
+                count++;
                 currentBits = new StringBuilder();
             } else {
                 bitText.setFill(Color.BLACK);
@@ -158,14 +159,21 @@ public class MyController implements Ports.DataListener, Ports.ErrorListener, Po
                 }
             }
 
-            if (i == newpacket.length() - 5) {
+            if (i == 38 + count) {
                 Text space = new Text(" ");
                 packetDisplay.getChildren().add(space);
             }
-            
+
             packetDisplay.getChildren().add(bitText);
+
+            if (i == 42 + count) {
+                Text space = new Text(" ");
+                packetDisplay.getChildren().add(space);
+            }
         }
     }
+
+    
 
     private void restrictInputToBinary(TextArea textArea) {
         UnaryOperator<TextFormatter.Change> filter = change -> {
@@ -236,8 +244,8 @@ public class MyController implements Ports.DataListener, Ports.ErrorListener, Po
     }
 
     @Override
-    public void onDataReceived(String data) {
-        String cleanData = PackageBuilder.removeBitStaffing(data);
+    public void onDataReceived(String cleanData) {
+        //String cleanData = PackageBuilder.removeBitStaffing(data);
         Platform.runLater(() -> {
             outputArea.appendText(cleanData.substring(16, cleanData.length() - 5));
         });
@@ -269,5 +277,16 @@ public class MyController implements Ports.DataListener, Ports.ErrorListener, Po
     @Override
     public void onCountIncrement(Integer countBytes) {
         transmittedBytesCount = countBytes;
+    }
+
+    @Override
+    public void onBitSend(String data) {
+        Platform.runLater(() -> {
+            for (char bit : data.toCharArray()) {
+                Text bitText = new Text(String.valueOf(bit));
+    
+                packetDisplay.getChildren().add(bitText);
+            }
+        });
     }
 }

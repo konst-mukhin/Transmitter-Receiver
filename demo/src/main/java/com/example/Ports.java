@@ -20,12 +20,19 @@ public class Ports {
 
     private CountSendedBytes countSendedBytes;
 
+    private SendBit sendBit;
+
     private Integer sendBytesCount = 0;
 
     private String newdata = "";
 
+    private StringBuilder resdata = new StringBuilder();
+
     public interface DataListener {
         void onDataReceived(String data);
+    }
+    public interface SendBit {
+        void onBitSend(String data);
     }
 
     public interface ErrorListener {
@@ -36,10 +43,11 @@ public class Ports {
         void onCountIncrement(Integer countSendBytes);
     }
 
-    public Ports(DataListener listener, ErrorListener error, CountSendedBytes bytes) {
+    public Ports(DataListener listener, ErrorListener error, CountSendedBytes bytes, SendBit bit) {
         this.dataListener = listener;
         this.errorListener = error;
         this.countSendedBytes = bytes;
+        sendBit = bit;
     }
 
     public Optional<String> message(String data, String sourcePort) {
@@ -50,7 +58,26 @@ public class Ports {
             System.out.println(newdata.length());
             String packet = PackageBuilder.createPackage(newdata, sourcePort);
             try {
-                serialPort1.writeString(packet);
+                int attempt = 0;
+                for (int i = 0; i < packet.length(); i++) {
+                    while (CSMACD.isBusy());
+                    serialPort1.writeString(packet.substring(i, i + 1));
+                    if (CSMACD.isCollision()) {
+                        attempt++;
+                        if(sendBit != null) {
+                            sendBit.onBitSend("!");
+                        }
+                        serialPort1.writeString(CSMACD.JAM_SIGNAL);
+                        i--;
+                        CSMACD.setDelay(attempt);
+                    } else {
+                        if(sendBit != null) {
+                            sendBit.onBitSend(". ");
+                        }
+                        attempt = 0;
+                    }
+                }
+                serialPort1.writeString(CSMACD.PACKET_END);
                 this.sendBytesCount += packet.length();
                 if (countSendedBytes != null) {
                     countSendedBytes.onCountIncrement(sendBytesCount);
@@ -59,6 +86,7 @@ public class Ports {
                 System.out.println(ex);
             }
             newdata = "";
+            System.out.println(packet);
             return Optional.of(packet);
         } else {
             return Optional.empty();
@@ -167,9 +195,19 @@ public class Ports {
             if (event.isRXCHAR() && event.getEventValue() > 0) {
                 try {
                     String data = serialPort2.readString();
+                    resdata.append(data);
+                    if(data.contains(CSMACD.JAM_SIGNAL)){
+                        resdata.delete(resdata.length()-2, resdata.length());
+                        System.out.println(resdata.toString());
+                    }
+                    else if(data.contains(CSMACD.PACKET_END)){
+                        resdata.delete(resdata.length()-1, resdata.length());
+                        String packet = PackageBuilder.removeBitStaffing(resdata.toString());
                         if (dataListener != null) {
-                            dataListener.onDataReceived(data);
+                            dataListener.onDataReceived(packet);
                         }
+                        resdata.delete(0, resdata.length());
+                    }
                 }
                 catch (SerialPortException ex) {
                     System.out.println(ex);

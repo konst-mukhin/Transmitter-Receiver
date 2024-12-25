@@ -15,10 +15,10 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <AnchorPane fx:id="controlPane" layoutX="269.0" layoutY="220.0" prefHeight="72.0" prefWidth="198.0">
-         <TextArea fx:id="controlArea" editable="false" prefHeight="77.0" prefWidth="198.0" />
-         <ComboBox fx:id="inputBox" layoutX="7.0" layoutY="23.0" prefHeight="26.0" prefWidth="86.0" />
-         <ComboBox fx:id="outputBox" layoutX="108.0" layoutY="23.0" prefHeight="26.0" prefWidth="86.0" />
+      <AnchorPane fx:id="controlPane" layoutX="269.0" layoutY="221.0" prefHeight="78.0" prefWidth="198.0">
+         <TextArea fx:id="controlArea" editable="false" layoutY="14.0" prefHeight="64.0" prefWidth="198.0" />
+         <ComboBox fx:id="inputBox" layoutX="7.0" layoutY="43.0" prefHeight="26.0" prefWidth="86.0" />
+         <ComboBox fx:id="outputBox" layoutX="105.0" layoutY="43.0" prefHeight="26.0" prefWidth="86.0" />
       </AnchorPane>
       <TextArea fx:id="inputArea" layoutX="25.0" layoutY="44.0" prefHeight="286.0" prefWidth="197.0" promptText="Start typing" />
       <Label fx:id="outputLabel" layoutX="515.0" layoutY="14.0" prefHeight="30.0" prefWidth="198.0" text="Output window:">
@@ -27,26 +27,26 @@
          </font>
       </Label>
       <Label layoutX="25.0" layoutY="-28.0" text="Label" />
-      <Label fx:id="chooseLabel" layoutX="276.0" layoutY="223.0" prefHeight="18.0" prefWidth="78.0" text="Sending port:">
+      <Label fx:id="chooseLabel" layoutX="277.0" layoutY="240.0" prefHeight="18.0" prefWidth="78.0" text="Sending port:">
          <font>
             <Font size="10.0" />
          </font>
       </Label>
       <Accordion layoutX="259.0" layoutY="224.0" />
-      <TextFlow fx:id="packetDisplay" layoutX="268.0" layoutY="44.0" prefHeight="136.0" prefWidth="198.0" style="-fx-background-color: white; -fx-border-color: lightgray; -fx-border-width: 1; -fx-padding: 5;" />
+      <TextFlow fx:id="packetDisplay" layoutX="268.0" layoutY="44.0" prefHeight="154.0" prefWidth="198.0" style="-fx-background-color: white; -fx-border-color: lightgray; -fx-border-width: 1; -fx-padding: 5;" />
       <Label fx:id="parametersLabel" layoutX="268.0" layoutY="14.0" prefHeight="30.0" prefWidth="140.0" text="Status window:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Label fx:id="bytesLabel" layoutX="272.0" layoutY="149.0" prefHeight="30.0" prefWidth="189.0" text=" Bytes transmitted: " />
+      <Label fx:id="bytesLabel" layoutX="271.0" layoutY="167.0" prefHeight="30.0" prefWidth="189.0" text=" Bytes transmitted: " />
       <TextArea fx:id="outputArea" editable="false" layoutX="515.0" layoutY="44.0" prefHeight="286.0" prefWidth="198.0" />
-      <Label layoutX="377.0" layoutY="225.0" prefHeight="15.0" prefWidth="78.0" text="Receiving port:">
+      <Label layoutX="374.0" layoutY="242.0" prefHeight="15.0" prefWidth="78.0" text="Receiving port:">
          <font>
             <Font size="10.0" />
          </font>
       </Label>
-      <Label fx:id="controlLabel" layoutX="269.0" layoutY="191.0" prefHeight="18.0" prefWidth="198.0" text="Control window:">
+      <Label fx:id="controlLabel" layoutX="269.0" layoutY="203.0" prefHeight="18.0" prefWidth="198.0" text="Control window:">
          <font>
             <Font size="20.0" />
          </font>
